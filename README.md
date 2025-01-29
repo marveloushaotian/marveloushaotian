@@ -1,17 +1,13 @@
 # Hi there, I'm Haotian! 👋
 
-I'm a passionate developer with a love for technology and innovation. Welcome to my GitHub profile!
+I'm a passionate bioinformatician in the filed of bacteria, phage, plasmid and defense! Welcome to my GitHub profile!
 
 ## 🛠️ Technologies & Tools
 
 ![Python](https://img.shields.io/badge/-Python-333?style=flat&logo=python)
-![JavaScript](https://img.shields.io/badge/-JavaScript-333?style=flat&logo=javascript)
 ![Node.js](https://img.shields.io/badge/-Node.js-333?style=flat&logo=node.js)
-![React](https://img.shields.io/badge/-React-333?style=flat&logo=react)
 ![Docker](https://img.shields.io/badge/-Docker-333?style=flat&logo=docker)
-![Kubernetes](https://img.shields.io/badge/-Kubernetes-333?style=flat&logo=kubernetes)
 ![Git](https://img.shields.io/badge/-Git-333?style=flat&logo=git)
-![GitHub Actions](https://img.shields.io/badge/-GitHub%20Actions-333?style=flat&logo=github-actions)
 
 ## 🔭 Current Projects
 
@@ -23,15 +19,15 @@ I'm a passionate developer with a love for technology and innovation. Welcome to
 
 I'm currently diving deeper into:
 
-- Advanced Machine Learning and AI
-- DevOps and Continuous Integration/Continuous Deployment (CI/CD)
-- Cloud Computing with AWS and Azure
+- The Dynamics of Defense Systems on the Plasmids and Phage.
+- The Co-Location of Defense Systems and MGEs.
+- Find novel defense systems.
 
 ## 📫 How to Reach Me
 
 - LinkedIn: [Haotian's LinkedIn](https://www.linkedin.com/in/marveloushaotian/)
 - Twitter: [@marveloushaotian](https://twitter.com/marveloushaotian)
-- Email: marveloushaotian@example.com
+- Email: marveloushaotian@icloud.com
 
 ## 📊 GitHub Stats
 
