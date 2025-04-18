@@ -1,4 +1,4 @@
-# Haotian Zheng 郑昊天
+## Haotian Zheng 郑昊天
 
 Bioinformatician  
 PhD student, Section of Microbiology, University of Copenhagen, Denmark
@@ -10,11 +10,5 @@ PhD student, Section of Microbiology, University of Copenhagen, Denmark
 - 🧰 I'm interested in developing and applying reproducible, scalable bioinformatics pipelines.
 
 🔗 Personal site: [https://haotianzheng.com](https://haotianzheng.com)
-
----
-
-## GitHub Stats
-
-![Haotian's GitHub stats](https://github-readme-stats.vercel.app/api?username=marveloushaotian&show_icons=true&theme=radical)
 
 ---
