@@ -290,19 +290,25 @@ def svg_overwrite(filename, age_data, commit_data, star_data, repo_data, contrib
     
     # Format numbers for dynamic length calculation
     loc_add_str = str(loc_data[0])
+    loc_del_str = str(loc_data[1])
     
-    # Calculate dynamic length for loc_del to ensure right alignment (Target 59 chars)
-    # Overhead: 37 chars. loc_data (7). Remaining: 15.
-    # loc_del_len = 15 - len(loc_add_str)
-    loc_del_len = 15 - len(loc_add_str)
+    # Calculate dynamic length for loc_data to ensure right alignment (Target 55 chars)
+    # Label "Lines of Code on GitHub" is 23 chars.
+    # Parens part " (loc_add++, loc_del--)" length needs to be calculated.
+    # Note: The SVG has a space before the opening paren.
+    parens_str = f" ({loc_add_str}++, {loc_del_str}--)"
+    parens_len = len(parens_str)
+    
+    # Target (55) - Label (23) - Parens (parens_len) = Dots + Value for loc_data
+    loc_data_len = 55 - 23 - parens_len
 
-    justify_format(root, 'repo_data', repo_data, 20)
-    justify_format(root, 'commit_data', commit_data, 18)
-    justify_format(root, 'loc_data', loc_data[2], 7)
+    justify_format(root, 'repo_data', repo_data, 19)
+    justify_format(root, 'commit_data', commit_data, 17)
+    justify_format(root, 'loc_data', loc_data[2], loc_data_len)
     justify_format(root, 'loc_add', loc_data[0])
-    justify_format(root, 'loc_del', loc_data[1], loc_del_len)
-    justify_format(root, 'age_data', age_data, 50)
-    justify_format(root, 'kernel_data', kernel_data, 50)
+    justify_format(root, 'loc_del', loc_data[1], 0)
+    justify_format(root, 'age_data', age_data, 48)
+    justify_format(root, 'kernel_data', kernel_data, 48)
     tree.write(filename, encoding='utf-8', xml_declaration=True)
 
 
