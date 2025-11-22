@@ -287,16 +287,22 @@ def svg_overwrite(filename, age_data, commit_data, star_data, repo_data, contrib
     """
     tree = etree.parse(filename)
     root = tree.getroot()
-    justify_format(root, 'commit_data', commit_data, 22)
-    justify_format(root, 'star_data', star_data, 14)
-    justify_format(root, 'repo_data', repo_data, 6)
-    justify_format(root, 'contrib_data', contrib_data)
-    justify_format(root, 'follower_data', follower_data, 10)
-    justify_format(root, 'loc_data', loc_data[2], 9)
+    
+    # Format numbers for dynamic length calculation
+    loc_add_str = f"{'{:,}'.format(loc_data[0])}"
+    
+    # Calculate dynamic length for loc_del to ensure right alignment (Target 59 chars)
+    # Overhead: 37 chars. loc_data (7). Remaining: 15.
+    # loc_del_len = 15 - len(loc_add_str)
+    loc_del_len = 15 - len(loc_add_str)
+
+    justify_format(root, 'repo_data', repo_data, 20)
+    justify_format(root, 'commit_data', commit_data, 18)
+    justify_format(root, 'loc_data', loc_data[2], 7)
     justify_format(root, 'loc_add', loc_data[0])
-    justify_format(root, 'loc_del', loc_data[1], 7)
-    justify_format(root, 'age_data', age_data, 48)
-    justify_format(root, 'kernel_data', kernel_data, 48)
+    justify_format(root, 'loc_del', loc_data[1], loc_del_len)
+    justify_format(root, 'age_data', age_data, 50)
+    justify_format(root, 'kernel_data', kernel_data, 50)
     tree.write(filename, encoding='utf-8', xml_declaration=True)
 
 
