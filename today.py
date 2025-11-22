@@ -289,7 +289,7 @@ def svg_overwrite(filename, age_data, commit_data, star_data, repo_data, contrib
     root = tree.getroot()
     
     # Format numbers for dynamic length calculation
-    loc_add_str = f"{'{:,}'.format(loc_data[0])}"
+    loc_add_str = str(loc_data[0])
     
     # Calculate dynamic length for loc_del to ensure right alignment (Target 59 chars)
     # Overhead: 37 chars. loc_data (7). Remaining: 15.
