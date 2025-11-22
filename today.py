@@ -304,7 +304,7 @@ def justify_format(root, element_id, new_text, length=0):
     """
     if isinstance(new_text, int):
         new_text = f"{'{:,}'.format(new_text)}"
-    new_text = str(new_text)
+    new_text = str(new_text).strip()
     find_and_replace(root, element_id, new_text)
     just_len = max(0, length - len(new_text))
     if just_len <= 2:
