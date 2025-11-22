@@ -57,7 +57,7 @@ text, tspan {white-space: pre;}
 <tspan x="400" y="210" class="cc">. </tspan><tspan class="key">Research</tspan>.<tspan class="key">Omics</tspan>:<tspan class="cc"> ........... </tspan><tspan class="value">Metagenomics, Transcriptomics</tspan>
 <tspan x="400" y="230" class="cc">. </tspan><tspan class="key">Research</tspan>.<tspan class="key">Tools</tspan>:<tspan class="cc"> ....... </tspan><tspan class="value">Nextflow, Plotly, Git, Conda, HPC</tspan>
 <tspan x="400" y="250" class="cc">. </tspan><tspan class="key">Research</tspan>.<tspan class="key">Database</tspan>:<tspan class="cc"> .......... </tspan><tspan class="value">NCBI, JGI, GTDB, ENA, PLSDB</tspan>
-<tspan x="400" y="270" class="cc">. </tspan><tspan class="key">Research</tspan>.<tspan class="key">Paper</tspan>:<tspan class="cc" id="paper_data_dots"></tspan><tspan class="value" id="paper_data">Microbiome (FA), Nature Microbiology (co-FA)</tspan>
+<tspan x="400" y="270" class="cc">. </tspan><tspan class="key">Research</tspan>.<tspan class="key">Paper</tspan>:<tspan class="cc" id="paper_data_dots"> ............ </tspan><tspan class="value" id="paper_data">Microbiome#1, Nature Micro#1</tspan>
 <tspan x="400" y="290" class="cc">. </tspan>
 <tspan x="400" y="310" class="cc">. </tspan><tspan class="key">Hobbies</tspan>.<tspan class="key">OCD</tspan>:<tspan class="cc"> ..................... </tspan><tspan class="value">Notes, Drawing, Gaming</tspan>
 <tspan x="400" y="330" class="cc">. </tspan>
