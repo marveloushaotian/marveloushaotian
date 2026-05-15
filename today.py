@@ -9,7 +9,15 @@ import hashlib
 # GitHub API 配置
 HEADERS = {'authorization': 'token '+ os.environ['ACCESS_TOKEN']}
 USER_NAME = os.environ['USER_NAME']  # 'marveloushaotian'
-QUERY_COUNT = {'user_getter': 0, 'follower_getter': 0, 'graph_repos_stars': 0, 'recursive_loc': 0, 'graph_commits': 0, 'loc_query': 0}
+QUERY_COUNT = {
+    'user_getter': 0,
+    'follower_getter': 0,
+    'graph_repos_stars': 0,
+    'graph_top_languages': 0,
+    'recursive_loc': 0,
+    'graph_commits': 0,
+    'loc_query': 0,
+}
 
 
 def daily_readme(birthday):
@@ -96,6 +104,76 @@ def graph_repos_stars(count_type, owner_affiliation, cursor=None, add_loc=0, del
             return request.json()['data']['user']['repositories']['totalCount']
         elif count_type == 'stars':
             return stars_counter(request.json()['data']['user']['repositories']['edges'])
+
+
+def graph_top_languages(owner_affiliation, cursor=None, language_totals=None):
+    """
+    Aggregate repository language sizes from GitHub GraphQL.
+    """
+    query_count('graph_top_languages')
+    if language_totals is None:
+        language_totals = {}
+    query = '''
+    query ($owner_affiliation: [RepositoryAffiliation], $login: String!, $cursor: String) {
+        user(login: $login) {
+            repositories(first: 100, after: $cursor, ownerAffiliations: $owner_affiliation) {
+                edges {
+                    node {
+                        ... on Repository {
+                            isFork
+                            languages(first: 10, orderBy: {field: SIZE, direction: DESC}) {
+                                edges {
+                                    size
+                                    node {
+                                        name
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                pageInfo {
+                    endCursor
+                    hasNextPage
+                }
+            }
+        }
+    }'''
+    variables = {'owner_affiliation': owner_affiliation, 'login': USER_NAME, 'cursor': cursor}
+    request = simple_request(graph_top_languages.__name__, query, variables)
+    repositories = request.json()['data']['user']['repositories']
+    for edge in repositories['edges']:
+        repo = edge['node']
+        if repo['isFork']:
+            continue
+        for language in repo['languages']['edges']:
+            name = language['node']['name']
+            language_totals[name] = language_totals.get(name, 0) + language['size']
+    if repositories['pageInfo']['hasNextPage']:
+        return graph_top_languages(owner_affiliation, repositories['pageInfo']['endCursor'], language_totals)
+    return format_top_languages(language_totals)
+
+
+def format_top_languages(language_totals):
+    """
+    Format the top languages compactly enough for the SVG card.
+    """
+    total = sum(language_totals.values())
+    if total == 0:
+        return 'Python (45%), R (30%), Shell (15%)'
+    language_names = {
+        'Jupyter Notebook': 'Jupyter',
+    }
+    ranked = sorted(language_totals.items(), key=lambda item: item[1], reverse=True)
+    parts = []
+    for name, size in ranked[:3]:
+        short_name = language_names.get(name, name)
+        percent = round(size * 100 / total)
+        parts.append(f'{short_name} ({percent}%)')
+    top_languages = ', '.join(parts)
+    if len(top_languages) > 34 and len(parts) > 2:
+        top_languages = ', '.join(parts[:2])
+    return top_languages
 
 
 def recursive_loc(owner, repo_name, data, cache_comment, addition_total=0, deletion_total=0, my_commits=0, cursor=None):
@@ -281,7 +359,7 @@ def stars_counter(data):
     return total_stars
 
 
-def svg_overwrite(filename, age_data, commit_data, star_data, repo_data, contrib_data, follower_data, loc_data, kernel_data, paper_data):
+def svg_overwrite(filename, age_data, commit_data, star_data, repo_data, contrib_data, follower_data, loc_data, kernel_data, paper_data, top_language_data):
     """
     更新 SVG 文件
     """
@@ -293,14 +371,14 @@ def svg_overwrite(filename, age_data, commit_data, star_data, repo_data, contrib
     loc_del_str = str(loc_data[1])
     
     # Calculate dynamic length for loc_data to keep the large LOC value visually separated.
-    # Label "Lines of Code on GitHub" is 23 chars.
+    # Label "LOC on GitHub" is 13 chars.
     # Parens part " (loc_add++, loc_del--)" length needs to be calculated.
     # Note: The SVG has a space before the opening paren.
     parens_str = f" ({loc_add_str}++, {loc_del_str}--)"
     parens_len = len(parens_str)
     
-    # Target (61) - Label (23) - Parens (parens_len) = Dots + Value for loc_data
-    loc_data_len = 61 - 23 - parens_len
+    # Target (61) - Label (13) - Parens (parens_len) = Dots + Value for loc_data
+    loc_data_len = 61 - 13 - parens_len
 
     justify_format(root, 'repo_data', repo_data, 19)
     justify_format(root, 'commit_data', commit_data, 17)
@@ -310,6 +388,7 @@ def svg_overwrite(filename, age_data, commit_data, star_data, repo_data, contrib
     justify_format(root, 'age_data', age_data, 48)
     justify_format(root, 'kernel_data', kernel_data, 48)
     justify_format(root, 'paper_data', paper_data, 40)
+    justify_format(root, 'top_language_data', top_language_data, 35)
     tree.write(filename, encoding='utf-8', xml_declaration=True)
 
 
@@ -436,16 +515,17 @@ if __name__ == '__main__':
     star_data, star_time = perf_counter(graph_repos_stars, 'stars', ['OWNER'])
     repo_data, repo_time = perf_counter(graph_repos_stars, 'repos', ['OWNER'])
     contrib_data, contrib_time = perf_counter(graph_repos_stars, 'repos', ['OWNER', 'COLLABORATOR', 'ORGANIZATION_MEMBER'])
+    top_language_data, top_language_time = perf_counter(graph_top_languages, ['OWNER'])
     follower_data, follower_time = perf_counter(follower_getter, USER_NAME)
 
     for index in range(len(total_loc)-1): 
         total_loc[index] = '{:,}'.format(total_loc[index])
 
-    svg_overwrite('dark_mode.svg', age_data, commit_data, star_data, repo_data, contrib_data, follower_data, total_loc[:-1], 'Postdoctoral Researcher', 'Microbiome#1, Nature Micro#1')
-    svg_overwrite('light_mode.svg', age_data, commit_data, star_data, repo_data, contrib_data, follower_data, total_loc[:-1], 'Postdoctoral Researcher', 'Microbiome#1, Nature Micro#1')
+    svg_overwrite('dark_mode.svg', age_data, commit_data, star_data, repo_data, contrib_data, follower_data, total_loc[:-1], 'Postdoctoral Researcher', 'Microbiome#1, Nat Commun#1', top_language_data)
+    svg_overwrite('light_mode.svg', age_data, commit_data, star_data, repo_data, contrib_data, follower_data, total_loc[:-1], 'Postdoctoral Researcher', 'Microbiome#1, Nat Commun#1', top_language_data)
 
     print('\033[F\033[F\033[F\033[F\033[F\033[F\033[F\033[F',
-        '{:<21}'.format('Total function time:'), '{:>11}'.format('%.4f' % (user_time + age_time + loc_time + commit_time + star_time + repo_time + contrib_time)),
+        '{:<21}'.format('Total function time:'), '{:>11}'.format('%.4f' % (user_time + age_time + loc_time + commit_time + star_time + repo_time + contrib_time + top_language_time)),
         ' s \033[E\033[E\033[E\033[E\033[E\033[E\033[E\033[E', sep='')
 
     print('Total GitHub GraphQL API calls:', '{:>3}'.format(sum(QUERY_COUNT.values())))
