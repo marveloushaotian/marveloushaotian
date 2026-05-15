@@ -292,15 +292,15 @@ def svg_overwrite(filename, age_data, commit_data, star_data, repo_data, contrib
     loc_add_str = str(loc_data[0])
     loc_del_str = str(loc_data[1])
     
-    # Calculate dynamic length for loc_data to ensure right alignment (Target 55 chars)
+    # Calculate dynamic length for loc_data to keep the large LOC value visually separated.
     # Label "Lines of Code on GitHub" is 23 chars.
     # Parens part " (loc_add++, loc_del--)" length needs to be calculated.
     # Note: The SVG has a space before the opening paren.
     parens_str = f" ({loc_add_str}++, {loc_del_str}--)"
     parens_len = len(parens_str)
     
-    # Target (55) - Label (23) - Parens (parens_len) = Dots + Value for loc_data
-    loc_data_len = 55 - 23 - parens_len
+    # Target (61) - Label (23) - Parens (parens_len) = Dots + Value for loc_data
+    loc_data_len = 61 - 23 - parens_len
 
     justify_format(root, 'repo_data', repo_data, 19)
     justify_format(root, 'commit_data', commit_data, 17)
@@ -441,8 +441,8 @@ if __name__ == '__main__':
     for index in range(len(total_loc)-1): 
         total_loc[index] = '{:,}'.format(total_loc[index])
 
-    svg_overwrite('dark_mode.svg', age_data, commit_data, star_data, repo_data, contrib_data, follower_data, total_loc[:-1], 'PhD', 'Microbiome#1, Nature Micro#1')
-    svg_overwrite('light_mode.svg', age_data, commit_data, star_data, repo_data, contrib_data, follower_data, total_loc[:-1], 'PhD', 'Microbiome#1, Nature Micro#1')
+    svg_overwrite('dark_mode.svg', age_data, commit_data, star_data, repo_data, contrib_data, follower_data, total_loc[:-1], 'Postdoctoral Researcher', 'Microbiome#1, Nature Micro#1')
+    svg_overwrite('light_mode.svg', age_data, commit_data, star_data, repo_data, contrib_data, follower_data, total_loc[:-1], 'Postdoctoral Researcher', 'Microbiome#1, Nature Micro#1')
 
     print('\033[F\033[F\033[F\033[F\033[F\033[F\033[F\033[F',
         '{:<21}'.format('Total function time:'), '{:>11}'.format('%.4f' % (user_time + age_time + loc_time + commit_time + star_time + repo_time + contrib_time)),
