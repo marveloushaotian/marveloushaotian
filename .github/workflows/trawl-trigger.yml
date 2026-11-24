@@ -1,0 +1,28 @@
+name: trawl backup trigger
+
+# Scheduled runs in marveloushaotian/trawl are unreliable, so this repo also starts them.
+# trawl's own gate makes extra triggers harmless: it runs once per day, only after 12:00 Helsinki.
+on:
+  schedule:
+    - cron: "5 10 * * *"
+    - cron: "35 12 * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Start trawl daily run
+        env:
+          TOKEN: ${{ secrets.TRAWL_DISPATCH_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then echo "TRAWL_DISPATCH_TOKEN not set; skipping."; exit 0; fi
+          curl -fsS -X POST \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/marveloushaotian/trawl/actions/workflows/daily.yml/dispatches \
+            -d '{"ref":"main","inputs":{"as_schedule":"true"}}'
+          echo "Dispatched."
