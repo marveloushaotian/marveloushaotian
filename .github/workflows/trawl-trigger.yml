@@ -4,8 +4,10 @@ name: trawl backup trigger
 # trawl's own gate makes extra triggers harmless: it runs once per day, only after 12:00 Helsinki.
 on:
   schedule:
-    - cron: "5 10 * * *"
-    - cron: "35 12 * * *"
+    # Only a safety net now: trawl's own workflow fires hourly. GitHub delays schedules
+    # on this account by hours, so these two are just extra chances, not the timing.
+    - cron: "5 9 * * *"
+    - cron: "5 15 * * *"
   workflow_dispatch:
 
 permissions: {}
